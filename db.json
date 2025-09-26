@@ -1,0 +1,87 @@
+{
+  "columns": [
+    {
+      "id": "1",
+      "title": "To Do"
+    },
+    {
+      "id": "2",
+      "title": "In Progress"
+    },
+    {
+      "id": "3",
+      "title": "Done"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Set up project repository on GitHub",
+      "description": "Create a new repository on GitHub and add the project files.",
+      "storyPoints": 1,
+      "priority": "Low",
+      "dueDate": "2025-09-27",
+      "startDate": "2025-09-25",
+      "assignId": 1,
+      "columnId": 1
+    },
+    {
+      "id": "2",
+      "title": "Install project dependencies (Vite, TypeScript, Chakra UI)",
+      "description": "Install the project dependencies using npm or yarn.",
+      "storyPoints": 2,
+      "priority": "High",
+      "dueDate": "2025-09-27",
+      "startDate": "2025-09-25",
+      "assignId": 1,
+      "columnId": 1
+    },
+    {
+      "id": "3",
+      "title": "Build the main board layout with three columns",
+      "description": "Build the main board layout with three columns.",
+      "storyPoints": 3,
+      "dueDate": "2025-09-27",
+      "startDate": "2025-09-25",
+      "priority": "Normal",
+      "assignId": 1,
+      "columnId": 2
+    },
+    {
+      "id": "4",
+      "title": "Create the 'Add New Task' form component",
+      "description": "Create the 'Add New Task' form component.",
+      "storyPoints": 2,
+      "priority": "High",
+      "dueDate": "2025-09-27",
+      "startDate": "2025-09-25",
+      "assignId": 1,
+      "columnId": 2
+    },
+    {
+      "id": "5",
+      "title": "Review the Product Requirements Document (PRD)",
+      "description": "Review the Product Requirements Document (PRD).",
+      "storyPoints": 3,
+      "priority": "Low",
+      "dueDate": "2025-09-27",
+      "startDate": "2025-09-25",
+      "assignId": 1,
+      "columnId": 3
+    }
+  ],
+  "assignees": [
+    {
+      "id": "1",
+      "name": "John Doe"
+    },
+    {
+      "id": "2",
+      "name": "Jane Smith"
+    },
+    {
+      "id": "3",
+      "name": "Jim Beam"
+    }
+  ]
+}
