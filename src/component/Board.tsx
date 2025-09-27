@@ -30,7 +30,12 @@ export interface Assignee {
 function Board() {
   const [columns, setColumns] = useState<Column[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
-  
+  const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
+  const handleNewTaskClick = () => {
+    setIsNewTaskModalOpen(true);
+    console.log('new task clicked');
+  }
+
   const changeTaskStoryPoints = (taskId: number, storyPoints: number) => {
     axios.patch(`http://localhost:3000/tasks/${taskId}`, {
       storyPoints: storyPoints

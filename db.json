@@ -19,11 +19,11 @@
       "title": "Set up project repository on GitHub",
       "description": "Create a new repository on GitHub and add the project files.",
       "storyPoints": 1,
-      "priority": "Low",
+      "priority": "High",
       "dueDate": "2025-09-27",
       "startDate": "2025-09-25",
       "assignId": 1,
-      "columnId": 1
+      "columnId": 3
     },
     {
       "id": "2",
@@ -67,7 +67,7 @@
       "dueDate": "2025-09-27",
       "startDate": "2025-09-25",
       "assignId": 1,
-      "columnId": 3
+      "columnId": 1
     }
   ],
   "assignees": [
