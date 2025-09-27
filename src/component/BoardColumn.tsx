@@ -1,6 +1,8 @@
 import { Badge, Box, Card, HStack, Text, VStack } from "@chakra-ui/react";
 import { Column, Task } from "./Board";
 import TaskCard from "./TaskCard";
+import NewTaskModal from "./NewTaskModal";
+import { createPortal } from "react-dom";
 
 interface ColumnProps {
   column: Column;
@@ -9,11 +11,15 @@ interface ColumnProps {
   changeTaskStoryPoints: (taskId: number, storyPoints: number) => void;
   changeColumn: (taskId: number, columnId: number) => void;
   getColumnTitle: (columnId: number) => string;
+  isNewTaskModalOpen: boolean;
+  setIsNewTaskModalOpen: (isNewTaskModalOpen: boolean) => void;
+  handleNewTask: (task: Task, status: string) => void;
 }
 
-function BoardColumn({ column, tasks, changeTaskPriority, changeTaskStoryPoints, changeColumn, getColumnTitle }: ColumnProps) {
+function BoardColumn({ column, tasks, changeTaskPriority, changeTaskStoryPoints, changeColumn, getColumnTitle, isNewTaskModalOpen, setIsNewTaskModalOpen, handleNewTask }: ColumnProps) {
   const tasksInColumn = tasks.filter((task) => task.columnId === +column.id);
 
+  
   return (
     <>
     <VStack>
@@ -31,6 +37,7 @@ function BoardColumn({ column, tasks, changeTaskPriority, changeTaskStoryPoints,
         ))}
       </Card.Root>
     </VStack>
+    {createPortal(<NewTaskModal isNewTaskModalOpen={isNewTaskModalOpen} onClose={setIsNewTaskModalOpen} handleNewTask={handleNewTask} />, document.getElementById("modal-root") as HTMLElement)}
     </>
   );
 }

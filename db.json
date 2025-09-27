@@ -30,11 +30,11 @@
       "title": "Install project dependencies (Vite, TypeScript, Chakra UI)",
       "description": "Install the project dependencies using npm or yarn.",
       "storyPoints": 2,
-      "priority": "High",
+      "priority": "Low",
       "dueDate": "2025-09-27",
       "startDate": "2025-09-25",
       "assignId": 1,
-      "columnId": 1
+      "columnId": 3
     },
     {
       "id": "3",
@@ -68,6 +68,19 @@
       "startDate": "2025-09-25",
       "assignId": 1,
       "columnId": 1
+    },
+    {
+      "id": "5f14",
+      "title": "soemthing for test",
+      "priority": "Normal",
+      "columnId": 1,
+      "storyPoints": 1
+    },
+    {
+      "id": "9194",
+      "title": "another test ",
+      "priority": "High",
+      "columnId": 2
     }
   ],
   "assignees": [

@@ -2,10 +2,10 @@ import { Box, Text } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 
 interface NavbarProps {
-  handleNewTaskClick: () => void;
+  toggleNewTaskModal: () => void;
 }
 
-function Navbar({ handleNewTaskClick }: NavbarProps) {
+function Navbar({ toggleNewTaskModal }: NavbarProps) {
   return (
     <Box display="flex" alignItems="center" p={4} bg="gray.800">
       <Button mr={4}>
@@ -14,7 +14,7 @@ function Navbar({ handleNewTaskClick }: NavbarProps) {
       <Button mr={4}>
         <Text>About</Text>
       </Button>
-      <Button onClick={() => handleNewTaskClick()}>
+      <Button onClick={() => toggleNewTaskModal()}>
         <Text>New Task</Text>
       </Button>
     </Box>

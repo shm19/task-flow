@@ -14,12 +14,12 @@ export interface Task {
   id: number;
   title: string;
   priority: string;
-  description: string;
-  storyPoints: number;
-  startDate: string;
-  dueDate: string;
-  columnId: number;
-  assignId: number;
+  description?: string;
+  storyPoints?: number;
+  startDate?: string;
+  dueDate?: string;
+  columnId?: number;
+  assignId?: number;
 }
 
 export interface Assignee {
@@ -27,13 +27,31 @@ export interface Assignee {
   name: string;
 }
 
-function Board() {
+interface BoardProps {
+  isNewTaskModalOpen: boolean;
+  setIsNewTaskModalOpen: (isNewTaskModalOpen: boolean) => void;
+}
+
+
+function Board({ isNewTaskModalOpen, setIsNewTaskModalOpen}: BoardProps) {
   const [columns, setColumns] = useState<Column[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
-  const handleNewTaskClick = () => {
-    setIsNewTaskModalOpen(true);
-    console.log('new task clicked');
+
+  const handleNewTask = (task: Task, status: string) => {
+    const statusColumnMap: Record<string, number> = {
+      'To Do': 1,
+      'In Progress': 2,
+      'Done': 3
+    }
+    const statusColumnId = statusColumnMap[status];
+    const newTask: Partial<Task> = {
+      ...task,
+      columnId: statusColumnId
+    }
+    delete newTask.id
+    axios.post("http://localhost:3000/tasks", newTask).then((res) => {
+      setTasks([...tasks, res.data]);
+    });
   }
 
   const changeTaskStoryPoints = (taskId: number, storyPoints: number) => {
@@ -100,10 +118,10 @@ function Board() {
     });
   }, []);
   return (
-    <Grid templateColumns="repeat(3, 1fr)" height="100vh" width="100vw"  gap={4} mx="auto" mt={4} p={8}>
+    <Grid templateColumns="repeat(3, 1fr)" height="100vh" width="100vh"  gap={4} mx="auto" mt={4} p={8}>
       {columns.map((column) => (
         <GridItem bg="gray.100" borderRadius="lg" key={column.id}>
-          <BoardColumn column={column} tasks={tasks} changeTaskPriority={changeTaskPriority} changeTaskStoryPoints={changeTaskStoryPoints} changeColumn={changeColumn} getColumnTitle={getColumnTitle} />
+          <BoardColumn column={column} tasks={tasks} changeTaskPriority={changeTaskPriority} changeTaskStoryPoints={changeTaskStoryPoints} changeColumn={changeColumn} getColumnTitle={getColumnTitle} isNewTaskModalOpen={isNewTaskModalOpen} setIsNewTaskModalOpen={setIsNewTaskModalOpen} handleNewTask={handleNewTask} />
         </GridItem>
       ))}
     </Grid>
