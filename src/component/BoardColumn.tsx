@@ -14,11 +14,11 @@ interface ColumnProps {
   isNewTaskModalOpen: boolean;
   setIsNewTaskModalOpen: (isNewTaskModalOpen: boolean) => void;
   handleNewTask: (task: Task, status: string) => void;
+  changeTaskTitle: (taskId: number, title: string) => void;
 }
 
-function BoardColumn({ column, tasks, changeTaskPriority, changeTaskStoryPoints, changeColumn, getColumnTitle, isNewTaskModalOpen, setIsNewTaskModalOpen, handleNewTask }: ColumnProps) {
+function BoardColumn({ column, tasks, changeTaskPriority, changeTaskStoryPoints, changeColumn, getColumnTitle, isNewTaskModalOpen, setIsNewTaskModalOpen, handleNewTask, changeTaskTitle }: ColumnProps) {
   const tasksInColumn = tasks.filter((task) => task.columnId === +column.id);
-
   
   return (
     <>
@@ -33,7 +33,7 @@ function BoardColumn({ column, tasks, changeTaskPriority, changeTaskStoryPoints,
           </Box>
         </Card.Header>
         {tasksInColumn.map((task) => (
-          <TaskCard key={task.id} task={task} changeTaskPriority={changeTaskPriority} changeTaskStoryPoints={changeTaskStoryPoints} changeColumn={changeColumn} getColumnTitle={getColumnTitle} />
+          <TaskCard key={task.id} task={task} changeTaskPriority={changeTaskPriority} changeTaskStoryPoints={changeTaskStoryPoints} changeColumn={changeColumn} getColumnTitle={getColumnTitle} changeTaskTitle={changeTaskTitle} />
         ))}
       </Card.Root>
     </VStack>

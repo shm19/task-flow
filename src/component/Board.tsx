@@ -37,6 +37,19 @@ function Board({ isNewTaskModalOpen, setIsNewTaskModalOpen}: BoardProps) {
   const [columns, setColumns] = useState<Column[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
 
+  const changeTaskTitle = (taskId: number, title: string) => {
+    axios.patch(`http://localhost:3000/tasks/${taskId}`, {
+      title
+    });
+    const updatedTasks = tasks.map((task: Task) => {
+      if (task.id === taskId) {
+        return {...task, title: title};
+      }
+      return task;
+    });
+    setTasks(updatedTasks);
+  }
+
   const handleNewTask = (task: Task, status: string) => {
     const statusColumnMap: Record<string, number> = {
       'To Do': 1,
@@ -103,7 +116,6 @@ function Board({ isNewTaskModalOpen, setIsNewTaskModalOpen}: BoardProps) {
 
   const getColumnTitle = (columnId: number) => {
     const column = columns.find((column) => Number(column.id) === columnId);
-    console.log('get column title', {columnId, column} , columns);
     return column?.title || "";
   }
 
@@ -121,7 +133,7 @@ function Board({ isNewTaskModalOpen, setIsNewTaskModalOpen}: BoardProps) {
     <Grid templateColumns="repeat(3, 1fr)" height="100vh" width="100vh"  gap={4} mx="auto" mt={4} p={8}>
       {columns.map((column) => (
         <GridItem bg="gray.100" borderRadius="lg" key={column.id}>
-          <BoardColumn column={column} tasks={tasks} changeTaskPriority={changeTaskPriority} changeTaskStoryPoints={changeTaskStoryPoints} changeColumn={changeColumn} getColumnTitle={getColumnTitle} isNewTaskModalOpen={isNewTaskModalOpen} setIsNewTaskModalOpen={setIsNewTaskModalOpen} handleNewTask={handleNewTask} />
+          <BoardColumn column={column} tasks={tasks} changeTaskPriority={changeTaskPriority} changeTaskStoryPoints={changeTaskStoryPoints} changeColumn={changeColumn} getColumnTitle={getColumnTitle} isNewTaskModalOpen={isNewTaskModalOpen} setIsNewTaskModalOpen={setIsNewTaskModalOpen} handleNewTask={handleNewTask} changeTaskTitle={changeTaskTitle} />
         </GridItem>
       ))}
     </Grid>
