@@ -1,10 +1,10 @@
 import { Badge, Box, Card, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
-import { Column, Task } from "./Board";
 import TaskCard from "./TaskCard";
 import NewTaskModal from "./NewTaskModal";
 import { createPortal } from "react-dom";
 import { useQuery } from "@tanstack/react-query";
 import client from "../client";
+import { Task } from "../interfaces/Task.interface";
 
 interface ColumnProps {
   columnId: number;

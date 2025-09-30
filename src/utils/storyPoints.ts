@@ -1,0 +1,3 @@
+const CONSTANT_STORY_POINTS = [1, 2, 4, 8, 16];
+
+export default CONSTANT_STORY_POINTS;

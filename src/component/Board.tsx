@@ -1,33 +1,8 @@
 import { Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
 import BoardColumn from "./BoardColumn";
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import client from "../client";
-
-export const CONSTANT_STORY_POINTS = [1, 2, 4, 8, 16];
-
-export interface Column {
-  id: number;
-  title: string;
-}
-
-export interface Task {
-  id: number;
-  title: string;
-  priority: string;
-  description?: string;
-  storyPoints?: number;
-  startDate?: string;
-  dueDate?: string;
-  columnId?: number;
-  assigneeId?: number;
-}
-
-export interface Assignee {
-  id: number;
-  name: string;
-}
+import { Column } from "../interfaces/Column.interface";
 
 interface BoardProps {
   isNewTaskModalOpen: boolean;
