@@ -1,25 +1,34 @@
-import { Badge, Box, Card, HStack, Text, VStack } from "@chakra-ui/react";
+import { Badge, Box, Card, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { Column, Task } from "./Board";
 import TaskCard from "./TaskCard";
 import NewTaskModal from "./NewTaskModal";
 import { createPortal } from "react-dom";
+import { useQuery } from "@tanstack/react-query";
+import client from "../client";
 
 interface ColumnProps {
-  column: Column;
-  tasks: Task[];
-  changeTaskPriority: (taskId: number) => void;
-  changeTaskStoryPoints: (taskId: number, storyPoints: number) => void;
-  changeColumn: (taskId: number, columnId: number) => void;
-  getColumnTitle: (columnId: number) => string;
+  columnId: number;
   isNewTaskModalOpen: boolean;
   setIsNewTaskModalOpen: (isNewTaskModalOpen: boolean) => void;
-  handleNewTask: (task: Task, status: string) => void;
-  changeTaskTitle: (taskId: number, title: string) => void;
 }
 
-function BoardColumn({ column, tasks, changeTaskPriority, changeTaskStoryPoints, changeColumn, getColumnTitle, isNewTaskModalOpen, setIsNewTaskModalOpen, handleNewTask, changeTaskTitle }: ColumnProps) {
-  const tasksInColumn = tasks.filter((task) => task.columnId === +column.id);
+function BoardColumn({ columnId, isNewTaskModalOpen, setIsNewTaskModalOpen }: ColumnProps) {  
+  const { data: tasks , isLoading, isError } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: () => client.get("tasks").then((res) => res.data),
+  });
   
+  const { data: column, isLoading: isColumnLoading, isError: isColumnError } = useQuery({
+    queryKey: ["columns", columnId],
+    queryFn: () => client.get(`columns/${columnId}`).then((res) => res.data),
+  });
+
+  
+  // @todo: fix loading and error handling 
+  if (isLoading || isColumnLoading) return <Spinner />
+  if (isError || isColumnError) return <Text color="red.500">Error loading tasks</Text>
+
+  const tasksInColumn = tasks?.filter((task: Task) => task.columnId === +columnId);
   return (
     <>
     <VStack>
@@ -32,12 +41,12 @@ function BoardColumn({ column, tasks, changeTaskPriority, changeTaskStoryPoints,
           <Badge size="sm" bgColor='gray.500' color='white'>{tasksInColumn.length} tasks</Badge>
           </Box>
         </Card.Header>
-        {tasksInColumn.map((task) => (
-          <TaskCard key={task.id} task={task} changeTaskPriority={changeTaskPriority} changeTaskStoryPoints={changeTaskStoryPoints} changeColumn={changeColumn} getColumnTitle={getColumnTitle} changeTaskTitle={changeTaskTitle} />
+        {tasksInColumn.map(({id: taskId}: Task) => (
+          <TaskCard key={taskId} taskId={taskId}/>
         ))}
       </Card.Root>
     </VStack>
-    {createPortal(<NewTaskModal isNewTaskModalOpen={isNewTaskModalOpen} onClose={setIsNewTaskModalOpen} handleNewTask={handleNewTask} />, document.getElementById("modal-root") as HTMLElement)}
+    {createPortal(<NewTaskModal isNewTaskModalOpen={isNewTaskModalOpen} onClose={setIsNewTaskModalOpen} />, document.getElementById("modal-root") as HTMLElement)}
     </>
   );
 }

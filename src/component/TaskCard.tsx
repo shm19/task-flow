@@ -1,36 +1,71 @@
-import { Badge, Card, HStack, Input, Menu, Portal, Text, Circle, Box } from "@chakra-ui/react";
-import { Task, Assignee, CONSTANT_STORY_POINTS } from "./Board";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { Badge, Card, HStack, Input, Menu, Portal, Text, Circle, Box, Spinner } from "@chakra-ui/react";
+import { Task, CONSTANT_STORY_POINTS, Column } from "./Board";
+import { useState } from "react";
 import { BsFillCalendar2DateFill } from "react-icons/bs";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import client from "../client";
+import { AxiosResponse } from "axios";
 
 interface TaskCardProps {
-  task: Task;
-  changeTaskPriority: (taskId: number) => void;
-  changeTaskStoryPoints: (taskId: number, storyPoints: number) => void;
-  changeColumn: (taskId: number, columnId: number) => void;
-  getColumnTitle: (columnId: number) => string;
-  changeTaskTitle: (taskId: number, title: string) => void;
+  taskId: number;
 }
 
-function TaskCard({ task, changeTaskPriority, changeTaskStoryPoints, changeColumn, getColumnTitle, changeTaskTitle }: TaskCardProps) {
-  const [assignee, setAssignee] = useState<Assignee | null>(null);
+function TaskCard({ taskId }: TaskCardProps) {
   const [titleEditMode, setTitleEditMode] = useState<boolean>(false);
-  const [editedTitle, setEditedTitle] = useState(task.title);
+  const [editedTitle, setEditedTitle] = useState("");
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (task.assignId) {
-      axios.get(`http://localhost:3000/assignees/${task.assignId}`).then((res) => {
-        setAssignee(res.data);
-      });
-    }
-  }, [task.assignId]);
+  const { data: columns } = useQuery({
+    queryKey: ["columns"],
+    queryFn: () => client.get("columns").then((res) => res.data),
+    staleTime: 24 * 60 * 60 * 1000,
+  });
 
-  const handleTitleSaveOnBlur = () => {
+  const { data: task, isLoading, isError } = useQuery({
+    queryKey: ["tasks", taskId],
+    queryFn: () => client.get(`tasks/${taskId}`).then((res) => res.data),
+    enabled: !!taskId,
+  });
   
+  const { data: assignee } = useQuery({
+    queryKey: ["assignees", task?.assigneeId],
+    queryFn: () => client.get(`assignees/${task.assigneeId}`).then((res) => res.data),
+    enabled: !!task?.assigneeId,
+  });
+
+  const { mutate: updateTaskProperty } = useMutation<AxiosResponse<Task>, Error, { taskProperty: string, value: string | number }, { oldTask: Task }>({
+    mutationFn: ({ taskProperty, value }) => client.patch(`tasks/${taskId}`, { [taskProperty]: value }),
+
+    onMutate: ({ taskProperty, value }) => {
+      const oldTask = queryClient.getQueryData(["tasks", taskId]) as Task;
+      queryClient.setQueryData(["tasks", taskId], (oldTask: Task | undefined)=> {
+        return { ...oldTask, [taskProperty]: value };
+      })
+      return { oldTask };
+    },
+
+    onSuccess: (taskResponse) => {
+      queryClient.setQueryData(["tasks", taskId], ()=> {
+        return taskResponse.data;
+      })
+    },
+    onError: (error, variables, context) => {
+      if (context) {
+        queryClient.setQueryData(["tasks", taskId], () => context.oldTask);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  })
+
+  if (isLoading) return <Spinner />
+  if (isError) return <Text color="red.500">Error loading task</Text>
+  
+  const handleTitleSaveOnBlur = () => {
     const newTitle = editedTitle.trim();
     if (newTitle && newTitle !== task.title) {
-      changeTaskTitle(task.id, newTitle);
+      updateTaskProperty({ taskProperty: "title", value: newTitle });
     }
 
     setTitleEditMode(false);
@@ -54,16 +89,21 @@ function TaskCard({ task, changeTaskPriority, changeTaskStoryPoints, changeColum
     }
   }
 
+  const handleColumnClick = (columnId: number) => {
+    const newColumnId = Number(columnId)+1 > columns.length ? 1 : Number(columnId)+1;
+    updateTaskProperty({ taskProperty: "columnId", value: newColumnId });
+  };
+
   const handleStoryPointsClick = (storyPoints: number) => {
-    changeTaskStoryPoints(task.id, storyPoints);
+    updateTaskProperty({ taskProperty: "storyPoints", value: storyPoints });
   };
   
   const handlePriorityClick = () => {
-    changeTaskPriority(task.id);
+    updateTaskProperty({ taskProperty: "priority", value: task.priority === "Low" ? "Normal" : task.priority === "Normal" ? "High" : "Low" });
   };
 
-  const handleColumnClick = (columnId: number) => {
-    changeColumn(task.id, columnId);
+  const getTaskColumnTitle = (columnId: number) => {
+    return columns?.find((column: Column) => column.id == columnId)?.title;
   };
 
   return (
@@ -86,7 +126,7 @@ function TaskCard({ task, changeTaskPriority, changeTaskStoryPoints, changeColum
       <Card.Body>
         <HStack>
           <Badge cursor="pointer" onClick={handlePriorityClick} bgColor={getPriorityColor(task.priority)}>{task.priority}</Badge>
-          <Badge cursor="pointer" onClick={() => handleColumnClick(task.columnId || 0)}>{getColumnTitle(task.columnId || 0)}</Badge>
+          <Badge cursor="pointer" onClick={() => handleColumnClick(task.columnId || 0)}>{getTaskColumnTitle(task.columnId || 0)}</Badge>
           <Menu.Root>
             <Menu.Trigger asChild>
               <Circle size="20px" boxShadow="md" cursor="pointer">

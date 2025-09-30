@@ -22,8 +22,8 @@
       "priority": "High",
       "dueDate": "2025-09-27",
       "startDate": "2025-09-25",
-      "assignId": 1,
-      "columnId": 3
+      "assigneeId": 1,
+      "columnId": 1
     },
     {
       "id": "2",
@@ -33,8 +33,8 @@
       "priority": "Low",
       "dueDate": "2025-09-27",
       "startDate": "2025-09-25",
-      "assignId": 1,
-      "columnId": 3
+      "assigneeId": 1,
+      "columnId": 1
     },
     {
       "id": "3",
@@ -44,43 +44,44 @@
       "dueDate": "2025-09-27",
       "startDate": "2025-09-25",
       "priority": "Normal",
-      "assignId": 1,
-      "columnId": 2
+      "assigneeId": 2,
+      "columnId": 3
     },
     {
       "id": "4",
       "title": "Create the 'Add New Task' form component",
       "description": "Create the 'Add New Task' form component.",
       "storyPoints": 2,
-      "priority": "High",
+      "priority": "Low",
       "dueDate": "2025-09-27",
       "startDate": "2025-09-25",
-      "assignId": 1,
+      "assigneeId": 1,
       "columnId": 2
     },
     {
       "id": "5",
-      "title": "Review the Product Requirements Document (PRD)",
+      "title": "Review the Product Requirements Document",
       "description": "Review the Product Requirements Document (PRD).",
       "storyPoints": 3,
-      "priority": "Low",
+      "priority": "Normal",
       "dueDate": "2025-09-27",
       "startDate": "2025-09-25",
-      "assignId": 1,
-      "columnId": 1
+      "assigneeId": "1",
+      "columnId": 3
     },
     {
       "id": "5f14",
       "title": "something for test",
       "priority": "Normal",
-      "columnId": 1,
+      "columnId": 2,
       "storyPoints": 1
     },
     {
       "id": "9194",
       "title": "another test ",
       "priority": "High",
-      "columnId": 2
+      "columnId": 2,
+      "storyPoints": 4
     }
   ],
   "assignees": [

@@ -12,15 +12,17 @@ import { Task } from "./Board";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import client from "../client";
+import { AxiosResponse } from "axios";
 
 interface NewTaskModalProps {
   isNewTaskModalOpen: boolean;
   onClose: (isNewTaskModalOpen: boolean) => void;
-  handleNewTask: (task: Task, status: string) => void;
 }
 
-function NewTaskModal({ isNewTaskModalOpen, onClose, handleNewTask }: NewTaskModalProps) {
-  if(!isNewTaskModalOpen) return null;
+function NewTaskModal({ isNewTaskModalOpen, onClose }: NewTaskModalProps) {
+  const queryClient = useQueryClient();
 
   const taskSchema = z.object({
     title: z.string().min(3, { error: "Title must be at least 3 characters" }),
@@ -34,14 +36,47 @@ function NewTaskModal({ isNewTaskModalOpen, onClose, handleNewTask }: NewTaskMod
     resolver: zodResolver(taskSchema),
   });
 
+  const { mutate: createTask } = useMutation<AxiosResponse<Task>, Error, Partial<Task>, { oldTask: Task[] }>({
+    onMutate: (task: Partial<Task>) => {
+      const oldTask = queryClient.getQueryData(["tasks"]) as Task[];
+      queryClient.setQueryData(["tasks"], (oldTask: Task[]) => {
+        return [...oldTask, {...task, id: Date.now()}];
+      });
+      return { oldTask };
+    },
+    mutationFn: (task: Partial<Task>) => client.post("tasks", task),
+    onSuccess: (taskResponse) => {
+      queryClient.setQueryData(["tasks"], (oldTask: Task[]) => {
+        return [...oldTask, taskResponse.data];
+      });
+    },
+    onError: (error, variables, context) => {
+      if (context) {
+        queryClient.setQueryData(["tasks"], () => context.oldTask);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
+  const { data: columns } = useQuery({
+    queryKey: ["columns"],
+    queryFn: () => client.get("columns").then((res) => res.data),
+  });
+
+  if(!isNewTaskModalOpen) return null;
+
   const handleFormSubmit = (data: TaskFormData) => {
+    const columnId = data.status === "To Do" ? columns[0].id : data.status === "In Progress" ? columns[1].id : columns[2].id;
     const task = {
       title: data.title,
       priority: data.priority,
-      id: 0,
+      columnId: Number(columnId),
     };
     reset();
-    handleNewTask(task, data.status);
+    console.log('task to create', {task});
+    createTask(task);
     onClose(false);
   }
 
