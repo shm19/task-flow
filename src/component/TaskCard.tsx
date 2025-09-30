@@ -1,10 +1,12 @@
 import { Badge, Card, HStack, Input, Menu, Portal, Text, Circle, Box, Spinner } from "@chakra-ui/react";
-import { Task, CONSTANT_STORY_POINTS, Column } from "./Board";
+import { Task } from "../interfaces/Task.interface";
+import { Column } from "../interfaces/Column.interface";
 import { useState } from "react";
 import { BsFillCalendar2DateFill } from "react-icons/bs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import client from "../client";
 import { AxiosResponse } from "axios";
+import CONSTANT_STORY_POINTS  from "../utils/storyPoints";
 
 interface TaskCardProps {
   taskId: number;

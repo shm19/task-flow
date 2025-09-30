@@ -1,21 +1,30 @@
-
-import { useState } from 'react';
-import Board from './component/Board'
-import Navbar from './component/Navbar'
+import { useState, useReducer } from "react";
+import filterReducer from "./reducers/filterReducer";
+import { initialFilterState } from "./reducers/filterReducer";
+import Board from "./component/Board";
+import Navbar from "./component/Navbar";
+import FilterBar from "./component/FilterBar";
+import FilterProvider from "./provider/filterProvider";
 
 function App() {
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
 
   const toggleNewTaskModal = () => {
-    setIsNewTaskModalOpen(prev => !prev);
-  }
+    setIsNewTaskModalOpen((prev) => !prev);
+  };
 
   return (
-  <>
-  <Navbar toggleNewTaskModal={toggleNewTaskModal} />
-  <Board isNewTaskModalOpen={isNewTaskModalOpen} setIsNewTaskModalOpen={setIsNewTaskModalOpen}/>
-  </>
-  )
+    <>
+      <FilterProvider>
+        <Navbar toggleNewTaskModal={toggleNewTaskModal} />
+        <FilterBar />
+        <Board
+          isNewTaskModalOpen={isNewTaskModalOpen}
+          setIsNewTaskModalOpen={setIsNewTaskModalOpen}
+        />
+      </FilterProvider>
+    </>
+  );
 }
 
-export default App
+export default App;

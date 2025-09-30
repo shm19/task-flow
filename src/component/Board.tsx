@@ -10,7 +10,6 @@ interface BoardProps {
 }
 
 function Board({ isNewTaskModalOpen, setIsNewTaskModalOpen}: BoardProps) {
-
   const { data: columns, isLoading, isError } = useQuery({
     queryKey: ["columns"],
     queryFn: () => client.get("columns").then((res) => res.data),
@@ -20,7 +19,7 @@ function Board({ isNewTaskModalOpen, setIsNewTaskModalOpen}: BoardProps) {
   if (isError) return <Text color="red.500">Error loading columns</Text>
 
   return (
-    <Grid templateColumns="repeat(3, 1fr)" height="100vh" width="100vh"  gap={4} mx="auto" mt={4} p={8}>
+    <Grid templateColumns="repeat(3, 1fr)" gap={4}>
       {columns.map((column: Column) => (
         <GridItem bg="gray.100" borderRadius="lg" key={column.id}>
           <BoardColumn columnId={column.id} isNewTaskModalOpen={isNewTaskModalOpen} setIsNewTaskModalOpen={setIsNewTaskModalOpen}/>
