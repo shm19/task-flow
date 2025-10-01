@@ -4,9 +4,9 @@ import NewTaskModal from "./NewTaskModal";
 import { createPortal } from "react-dom";
 import client from "../client";
 import { Task } from "../interfaces/Task.interface";
-import { useContext, useMemo } from "react";
-import FilterContext from "../context/filterCotext";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import useFilterStore from "../store";
 
 interface ColumnProps {
   columnId: number;
@@ -15,9 +15,8 @@ interface ColumnProps {
 }
 
 function BoardColumn({ columnId, isNewTaskModalOpen, setIsNewTaskModalOpen }: ColumnProps) {
-  const {
-    FilterState: { priority, storyPoint, titleSearch },
-  } = useContext(FilterContext);
+  const { priority, storyPoint, titleSearch } = useFilterStore((state)=> state.filter);
+
   const {
     data: tasks,
     isLoading,

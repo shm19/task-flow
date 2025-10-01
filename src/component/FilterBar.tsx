@@ -1,29 +1,26 @@
 import { Button, Menu, Portal, Box, Input } from "@chakra-ui/react";
-import { useContext } from "react";
 import CONSTANT_STORY_POINTS from "../utils/storyPoints";
-import FilterContext from "../context/filterCotext";
+import useFilterStore from "../store";
 
 function FilterBar() {
-  const {
-    dispatch,
-    FilterState: { priority, storyPoint, titleSearch },
-  } = useContext(FilterContext);
+  const  setFilter  = useFilterStore((state) => state.setFilter);
+  const {priority, storyPoint, titleSearch} = useFilterStore((state)=> state.filter);
   const priorityOptions = ["Low", "Normal", "High", "All"];
 
   const handlePriorityClick = (priority: string) => {
-    dispatch({ type: "SET_PRIORITY", payload: priority });
+    setFilter({ priority });
   };
 
   const handleStoryPointClick = (storyPoint: number) => {
     if (storyPoint === 0) {
-      dispatch({ type: "SET_STORY_POINT", payload: 0 });
+      setFilter({ storyPoint: 0 });
     } else {
-      dispatch({ type: "SET_STORY_POINT", payload: storyPoint });
+      setFilter({ storyPoint });
     }
   };
 
   const handleTitleSearch = (titleSearch: string) => {
-    dispatch({ type: "SET_TITLE_SEARCH", payload: titleSearch });
+    setFilter({ titleSearch });
   };
 
   return (
@@ -88,7 +85,7 @@ function FilterBar() {
         _placeholder={{ color: "white" }}
         type="text"
         placeholder="Search by title"
-        value={titleSearch || ""}
+        value={titleSearch}
         onChange={(e) => handleTitleSearch(e.target.value)}
       />
     </Box>
