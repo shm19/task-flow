@@ -1,12 +1,12 @@
-import { Badge, Box, Card, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Badge, Box, Card, Spinner, Text, VStack } from "@chakra-ui/react";
 import TaskCard from "./TaskCard";
 import NewTaskModal from "./NewTaskModal";
 import { createPortal } from "react-dom";
-import { useQuery } from "@tanstack/react-query";
 import client from "../client";
 import { Task } from "../interfaces/Task.interface";
 import { useContext, useMemo } from "react";
 import FilterContext from "../context/filterCotext";
+import { useQuery } from "@tanstack/react-query";
 
 interface ColumnProps {
   columnId: number;
@@ -36,10 +36,6 @@ function BoardColumn({ columnId, isNewTaskModalOpen, setIsNewTaskModalOpen }: Co
     queryFn: () => client.get(`columns/${columnId}`).then((res) => res.data),
   });
 
-  // @todo: fix loading and error handling
-  if (isLoading || isColumnLoading) return <Spinner />;
-  if (isError || isColumnError) return <Text color="red.500">Error loading tasks</Text>;
-
   const tasksInColumn = useMemo(() => {
     let tasksInColumn = tasks?.filter((task: Task) => task.columnId === +columnId);
     if (priority !== "All")
@@ -52,6 +48,9 @@ function BoardColumn({ columnId, isNewTaskModalOpen, setIsNewTaskModalOpen }: Co
       );
     return tasksInColumn;
   }, [tasks, priority, storyPoint, titleSearch]);
+
+  if (isLoading || isColumnLoading) return <Spinner />;
+  if (isError || isColumnError) return <Text color="red.500">Error loading tasks</Text>;
 
   return (
     <>
